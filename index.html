@@ -1,550 +1,268 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Unsplash Search App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glassy Unsplash Search</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200..800&family=Pacifico&display=swap" rel="stylesheet" />
 
   <style>
-
     :root {
+      /* Colors */
       --primary: #3b82f6;
       --primary-dark: #2563eb;
       --primary-light: #60a5fa;
       --secondary: #6366f1;
       --accent: #8b5cf6;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --error: #ef4444;
 
+      /* Neutrals */
       --bg-primary: #0f172a;
-      --bg-secondary: #0f233d; 
-      --bg-tertiary: #16263f;
-      --text-primary: #eef6ff;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text-primary: #f1f5f9;
       --text-secondary: #cbd5e1;
       --text-tertiary: #94a3b8;
+
+      /* Borders / shadows */
       --border: #475569;
-      --border-light: rgba(255,255,255,0.06);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.16), 0 4px 6px rgba(0, 0, 0, 0.23);
+      --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+      --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.5);
 
-      --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-      --gradient-accent: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
-      --gradient-bg: linear-gradient(152deg, var(--bg-primary) 0%, #112135 100%);
-
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.16), 0 4px 6px rgba(0,0,0,0.23);
-      --shadow-lg: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-      --shadow-primary: 0 0 20px rgba(59,130,246,0.18);
-      --shadow-glow: 0 0 15px rgba(59,130,246,0.25);
-
+      /* Typography */
       --font-body: "Oxanium", -apple-system, BlinkMacSystemFont, sans-serif;
       --font-heading: "Orbitron", "Oxanium", sans-serif;
 
-      --space-xs: 0.25rem;
+      /* Spacing */
       --space-sm: 0.5rem;
       --space-md: 1rem;
       --space-lg: 1.5rem;
-      --space-xl: 2rem;
 
-      --radius-sm: 0.25rem;
-      --radius-md: 0.6rem;
-      --radius-lg: 14px;
-      --radius-xl: 20px;
+      /* Border Radius */
+      --radius-md: 0.5rem;
+      --radius-lg: 1rem;
 
+      /* Transition */
       --transition-fast: 0.15s ease;
       --transition-normal: 0.3s ease;
-      --transition-slow: 0.5s ease;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html,body { height: 100%; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: var(--font-body);
-      background: var(--gradient-bg);
+      background-color: var(--bg-primary);
       color: var(--text-primary);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      padding: 32px;
+      min-height: 100vh;
+      padding: var(--space-lg);
     }
 
-    .app {
-      max-width: 1200px;
+    .container {
+      max-width: 1000px;
       margin: 0 auto;
     }
 
-    header.app-header {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 28px;
-    }
-
-    .brand {
-      display:flex;
-      gap:14px;
-      align-items:center;
-    }
-    .logo {
-      width:56px;
-      height:56px;
-      border-radius:14px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: var(--shadow-primary);
-      display:flex;
-      align-items:center;
-      justify-content:center;
+    h1 {
       font-family: var(--font-heading);
-      font-size:18px;
-      color: var(--primary-light);
-    }
-    .brand h1 {
-      font-family: var(--font-heading);
-      font-size: 20px;
-      letter-spacing: 0.6px;
-      color: var(--text-primary);
-    }
-    .brand p {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      margin-top: 2px;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: var(--space-lg);
     }
 
     .search-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      border-radius: var(--radius-xl);
-      padding: 18px;
-      display:flex;
-      gap: 12px;
-      align-items:center;
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow: var(--shadow-md);
-      backdrop-filter: blur(8px) saturate(120%);
-      width:100%;
+      display: flex;
+      gap: var(--space-md);
+      justify-content: center;
+      margin-bottom: var(--space-lg);
     }
 
-    .search-input {
-      flex:1;
-      display:flex;
-      gap:12px;
-      align-items:center;
+    .search-card input[type="text"] {
+      padding: var(--space-md);
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      flex: 1;
     }
 
-    .search-input input[type="search"] {
-      background: transparent;
+    .search-card button {
+      padding: var(--space-md) var(--space-lg);
+      font-size: 1rem;
+      background: var(--primary);
+      color: white;
       border: none;
-      color: var(--text-primary);
-      font-size: 1.05rem;
-      padding: 12px 14px;
-      outline: none;
-      width:100%;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(99,102,241,0.12));
-      color: var(--text-primary);
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-md);
       cursor: pointer;
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      font-weight:600;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-glow); }
-
-    .icon {
-      width:18px;height:18px;display:inline-block;
-      filter: drop-shadow(0 1px 0 rgba(0,0,0,0.2));
+      transition: all var(--transition-fast);
     }
 
-    .results {
-      margin-top: 20px;
+    .search-card button:hover {
+      background: var(--primary-dark);
+    }
+
+    .status {
+      text-align: center;
+      margin-bottom: var(--space-md);
+      color: var(--text-secondary);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-md);
     }
 
-    .card {
+    .grid-item {
       position: relative;
-      border-radius: 14px;
       overflow: hidden;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.04);
-      transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
       cursor: pointer;
     }
-    .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
 
-    .card img {
-      display:block;
-      width:100%;
-      height: 160px;
-      object-fit: cover;
-      transition: transform 0.6s ease;
-    }
-    .card:hover img { transform: scale(1.05); }
-
-    .card-meta {
-      position: absolute;
-      left: 12px;
-      bottom: 12px;
-      right:12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      color:var(--text-primary);
-      background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.06));
-      padding:8px;
-      border-radius:10px;
-      backdrop-filter: blur(6px);
-    }
-    .photographer {
-      display:flex;
-      gap:10px;align-items:center;font-size:13px;
-    }
-    .photographer img {
-      width:30px;height:30px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,0.06);
-    }
-
-    .center {
-      text-align:center;
-      padding:40px 10px;
-      color:var(--text-tertiary);
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 60;
-      background: linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.85));
-      padding: 30px;
-    }
-    .modal.open { display: flex; }
-
-    .modal-inner {
-      max-width: 1100px;
+    .grid-item img {
       width: 100%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius: 16px;
-      padding: 18px;
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow: var(--shadow-lg);
-      display:flex;
-      gap:16px;
-      align-items:flex-start;
-    }
-    .modal-img {
-      flex:1;
-      max-height: 80vh;
-      overflow: hidden;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.03);
-    }
-    .modal-img img { width:100%; height:100%; object-fit:contain; display:block; }
-
-    .modal-side {
-      width:320px;
-      padding-left:8px;
-      display:flex;flex-direction:column;gap:10px;
-    }
-    .modal-side .meta { font-size:14px; color:var(--text-secondary); }
-    .modal-side .meta a { color:var(--primary-light); text-decoration:none; font-weight:600; }
-    .modal-actions { margin-top:auto; display:flex; gap:10px; }
-    .small {
-      font-size:13px; padding:8px 10px; border-radius:8px;
-      background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03);
+      height: 150px;
+      object-fit: cover;
+      transition: transform var(--transition-normal);
     }
 
-    @media (max-width:880px) {
-      .modal-inner { flex-direction:column; }
-      .modal-side { width:100%; }
-      .card img { height: 140px; }
+    .grid-item:hover img {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-glow);
     }
 
-    footer {
-      margin-top: 28px;
-      color: var(--text-tertiary);
-      font-size: 13px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
+    .photographer-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.5rem;
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+      font-size: 0.9rem;
     }
-
-    .attribution a { color: var(--primary); text-decoration:none; font-weight:600; }
   </style>
 </head>
 <body>
-  <div class="app container">
-    <header class="app-header">
-      <div class="brand">
-        <div class="logo">G</div>
-        <div>
-          <h1>Glassy Search</h1>
-          <p>Explore Unsplash photos — elegant, glassy UI.</p>
-        </div>
-      </div>
+  <div class="container">
+    <h1>Glassy Unsplash Search</h1>
 
-      <div style="width:420px; max-width:55%;">
-        <div class="search-card" role="search">
-          <form id="searchForm" style="display:flex; gap:8px; width:100%;">
-            <div class="search-input">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" style="opacity:0.9">
-                <path d="M21 21l-4.35-4.35" stroke="#9fbefc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="11" cy="11" r="6" stroke="#9fbefc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <input id="query" name="query" type="search" placeholder="Search Unsplash (e.g. mountains, neon city, portrait)" autocomplete="off" />
-            </div>
-            <button id="searchBtn" class="btn" type="submit">
-              <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="#cfe6ff" stroke-width="1.6" stroke-linecap="round"/></svg>
-              Search
-            </button>
-          </form>
-        </div>
-      </div>
-    </header>
-
-    <main>
-      <section class="results">
-        <div id="status" class="center">Type a query and press Search to find photos</div>
-        <div id="grid" class="grid" aria-live="polite"></div>
-        <div id="loader" class="center hidden">Loading...</div>
-        <div id="loadMoreWrap" style="display:flex; justify-content:center; margin-top:16px;">
-          <button id="loadMore" class="btn hidden">Load more</button>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="attribution">Powered by <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a></div>
-      <div style="opacity:0.85;font-size:13px;">Remember to include your Access Key in the script (see instructions).</div>
-    </footer>
-  </div>
-
-  <!-- Modal / lightbox -->
-  <div id="modal" class="modal" aria-hidden="true" role="dialog">
-    <div class="modal-inner" role="document">
-      <div class="modal-img"><img id="modalImage" src="" alt=""></div>
-      <div class="modal-side">
-        <div class="meta">
-          <div id="modalDesc" style="font-weight:700;color:var(--text-primary)"></div>
-          <div style="margin-top:6px;" id="modalUser"></div>
-          <div style="margin-top:8px;" id="modalStats"></div>
-        </div>
-        <div class="modal-actions">
-          <a id="openUnsplash" class="btn small" target="_blank" rel="noopener">Open on Unsplash</a>
-          <a id="downloadBtn" class="btn small" target="_blank" rel="noopener">Download</a>
-          <button id="closeModal" class="btn small">Close</button>
-        </div>
-      </div>
+    <div class="search-card">
+      <input id="searchInput" type="text" placeholder="Search for images..." />
+      <button id="searchButton">Search</button>
     </div>
+
+    <div id="status" class="status">Enter a search query and hit “Search”</div>
+
+    <div id="grid" class="grid"></div>
   </div>
 
   <script>
+    // ** CONFIG **  
+    const ACCESS_KEY = "azxC7gJDxRQ8ChWOzJqTFDeOHJK-k0MWBPIU6bK__RI";
 
-    const ACCESS_KEY = 'azxC7gJDxRQ8ChWOzJqTFDeOHJK-k0MWBPIU6bK__RI'; 
+    // Elements  
+    const searchInput = document.getElementById("searchInput");
+    const searchButton = document.getElementById("searchButton");
+    const statusEl = document.getElementById("status");
+    const grid = document.getElementById("grid");
 
-    const PER_PAGE = 12;
+    // State  
     let currentPage = 1;
-    let currentQuery = '';
-    let totalResults = 0;
-    let isLoading = false;
+    let currentQuery = "";
 
-    const grid = document.getElementById('grid');
-    const status = document.getElementById('status');
-    const loader = document.getElementById('loader');
-    const loadMoreBtn = document.getElementById('loadMore');
-    const modal = document.getElementById('modal');
-    const modalImage = document.getElementById('modalImage');
-    const modalDesc = document.getElementById('modalDesc');
-    const modalUser = document.getElementById('modalUser');
-    const modalStats = document.getElementById('modalStats');
-    const openUnsplash = document.getElementById('openUnsplash');
-    const downloadBtn = document.getElementById('downloadBtn');
-
-    document.getElementById('searchForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const q = document.getElementById('query').value.trim();
-      if (!q) { status.textContent = 'Please enter a search term.'; return; }
-      currentQuery = q;
-      currentPage = 1;
-      grid.innerHTML = '';
-      fetchPhotos({ query: currentQuery, page: currentPage, replace: true });
+    // Event listeners  
+    searchButton.addEventListener("click", () => {
+      doSearch();
     });
 
-    loadMoreBtn.addEventListener('click', () => {
-      if (!isLoading) {
-        currentPage++;
-        fetchPhotos({ query: currentQuery, page: currentPage, replace: false });
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        doSearch();
       }
     });
 
-    grid.addEventListener('click', (ev) => {
-      const card = ev.target.closest('.card');
-      if (!card) return;
-      const idx = card.dataset.index;
-      const meta = JSON.parse(card.dataset.meta);
-      openLightbox(meta);
-    });
-
-    document.getElementById('closeModal').addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
-
-    function openLightbox(photo) {
-      modalImage.src = photo.urls.regular;
-      modalImage.alt = photo.alt_description || photo.description || 'Unsplash photo';
-      modalDesc.textContent = photo.description || photo.alt_description || 'Photo';
-      modalUser.innerHTML = `
-        <a href="${photo.user.links.html}?utm_source=glassy_search&utm_medium=referral" target="_blank" rel="noopener" style="color:var(--primary-light);text-decoration:none;font-weight:700;">
-          ${photo.user.name}
-        </a>
-        <div style="font-size:13px;color:var(--text-tertiary);margin-top:6px;">@${photo.user.username}</div>
-      `;
-      modalStats.textContent = 'Likes: ' + (photo.likes || 0);
-
-      openUnsplash.href = photo.links.html + '?utm_source=glassy_search&utm_medium=referral';
-
-      downloadBtn.href = photo.links.download + '?force=true';
-      downloadBtn.addEventListener('click', () => {
-
-      }, { once: true });
-
-      modal.classList.add('open');
-      modal.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeModal() {
-      modal.classList.remove('open');
-      modal.setAttribute('aria-hidden', 'true');
-      modalImage.src = '';
-    }
-
-    async function fetchPhotos({ query, page = 1, replace = false }) {
-      if (!ACCESS_KEY || ACCESS_KEY === 'PASTE_YOUR_UNSPLASH_ACCESS_KEY_HERE') {
-        status.textContent = 'ERROR: Please add your Unsplash Access Key into the script (ACCESS_KEY).';
+    // Search function  
+    async function doSearch() {
+      const query = searchInput.value.trim();
+      if (!query) {
+        statusEl.textContent = "Please enter a search term.";
         return;
       }
 
-      isLoading = true;
-      loader.classList.remove('hidden');
-      status.textContent = '';
-      loadMoreBtn.classList.add('hidden');
+      currentQuery = query;
+      currentPage = 1;
+      grid.innerHTML = "";  
+      statusEl.textContent = "Searching...";
+      await fetchAndDisplay(query, currentPage);
+    }
 
-      const endpoint = `https:
+    // Fetch + render  
+    async function fetchAndDisplay(query, page) {
+      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&page=${page}&per_page=20`;
+
       try {
-        const res = await fetch(endpoint, {
+        const response = await fetch(url, {
           headers: {
-            Authorization: 'Client-ID ' + ACCESS_KEY
+            Authorization: `Client-ID ${ACCESS_KEY}`
           }
         });
 
-        if (!res.ok) {
-          const errText = await res.text();
-          throw new Error('API error: ' + res.status + ' ' + errText);
+        if (!response.ok) {
+          throw new Error("HTTP error, status = " + response.status);
         }
 
-        const data = await res.json();
-        totalResults = data.total || 0;
-        if (replace && totalResults === 0) {
-          status.textContent = 'No results found for "' + query + '". Try another term.';
-        } else {
-          status.textContent = `Showing ${Math.min((page) * PER_PAGE, totalResults)} of ${totalResults} results`;
+        const data = await response.json();
+        const results = data.results;
+
+        if (!results || results.length === 0) {
+          statusEl.textContent = `No results for "${query}".`;
+          return;
         }
 
-        renderPhotos(data.results || [], { replace });
+        // Show total / how many loaded
+        statusEl.textContent = `Showing page ${page} – ${results.length} of ~${data.total} results`;
 
-        const totalPages = Math.ceil((data.total || 0) / PER_PAGE);
-        if (page < totalPages) {
-          loadMoreBtn.classList.remove('hidden');
-        } else {
-          loadMoreBtn.classList.add('hidden');
-        }
-      } catch (err) {
-        console.error(err);
-        status.textContent = 'Failed to fetch photos. Check console for details.';
-      } finally {
-        isLoading = false;
-        loader.classList.add('hidden');
+        renderGrid(results);
+
+      } catch (error) {
+        console.error("Fetching error:", error);
+        statusEl.textContent = "Error fetching images. Check console.";
       }
     }
 
-    function renderPhotos(photos, { replace = false } = {}) {
-      if (replace) grid.innerHTML = '';
-      photos.forEach((p, i) => {
-        const idx = (currentPage - 1) * PER_PAGE + i;
-        const card = document.createElement('article');
-        card.className = 'card';
-        card.dataset.index = idx;
+    // Render grid of photos  
+    function renderGrid(photos) {
+      photos.forEach((photo) => {
+        const div = document.createElement("div");
+        div.classList.add("grid-item");
 
-        const meta = {
-          id: p.id,
-          alt_description: p.alt_description,
-          description: p.description,
-          urls: p.urls,
-          user: {
-            name: p.user.name,
-            username: p.user.username,
-            links: p.user.links
-          },
-          likes: p.likes,
-          links: p.links
-        };
-        card.dataset.meta = JSON.stringify(meta);
+        const img = document.createElement("img");
+        img.src = photo.urls.small;
+        img.alt = photo.alt_description || "Unsplash photo";
 
-        card.innerHTML = `
-          <img loading="lazy" src="${p.urls.small}" alt="${escapeHtml(p.alt_description || p.description || 'Unsplash photo')}" />
-          <div class="card-meta">
-            <div class="photographer">
-              <img src="${p.user.profile_image.small}" alt="${escapeHtml(p.user.name)}" />
-              <div>
-                <div style="font-weight:700">${escapeHtml(p.user.name)}</div>
-                <div style="font-size:12px;color:var(--text-tertiary)">@${escapeHtml(p.user.username)}</div>
-              </div>
-            </div>
-            <div style="font-size:12px;color:var(--text-tertiary);">❤ ${p.likes || 0}</div>
-          </div>
+        const info = document.createElement("div");
+        info.classList.add("photographer-info");
+        info.innerHTML = `
+          By <a href="${photo.user.links.html}?utm_source=GlassySearch&utm_medium=referral" target="_blank" rel="noopener" style="color: white; text-decoration: underline;">
+            ${photo.user.name}
+          </a>
         `;
-        grid.appendChild(card);
+
+        div.appendChild(img);
+        div.appendChild(info);
+        grid.appendChild(div);
       });
     }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/[&<>"']/g, function (m) {
-        return ({ '&': '&amp;', '<': '&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[m];
-      });
-    }
-
-    window.addEventListener('scroll', () => {
-      if (isLoading) return;
-      if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 800)) {
-
-        if (!loadMoreBtn.classList.contains('hidden')) {
-          loadMoreBtn.click();
-        }
-      }
-    });
-
   </script>
 </body>
 </html>
