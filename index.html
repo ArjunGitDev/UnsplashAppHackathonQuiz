@@ -137,6 +137,7 @@
       display: block;
       text-align: center;
       border: none;
+      width: 100%;
     }
 
     .fullscreen-btn:hover, .download-btn:hover {
@@ -318,13 +319,18 @@ function renderImages(photos) {
       <img src="${photo.urls.small}" alt="${photo.alt_description || ''}">
       <div class="action-buttons">
         <button class="fullscreen-btn">⛶</button>
-        <a class="download-btn" href="${photo.links.download}" target="_blank">⬇</a>
+        <button class="download-btn">⬇</button>
       </div>
     `;
 
     item.querySelector(".fullscreen-btn").addEventListener("click", (e) => {
       e.stopPropagation();
       openModal(photo);
+    });
+
+    item.querySelector(".download-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      downloadImage(photo);
     });
 
     item.querySelector("img").addEventListener("click", () => openModal(photo));
@@ -354,7 +360,7 @@ function openModal(photo) {
       📸 Photo by <a href="${photographerLink}" target="_blank">${photographer}</a>
     </div>
     <div class="photo-details">
-      <span class="detail-item">📏 ${dimensions}</span>
+      <span class="detail-item">📏 ${dimensions} px</span>
       <span class="detail-item">❤️ ${likes} likes</span>
     </div>
   `;
@@ -369,6 +375,29 @@ modal.addEventListener("click", e => {
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") modal.classList.remove("show");
 });
+
+async function downloadImage(photo) {
+  try {
+    if (photo.links.download_location) {
+      await fetch(photo.links.download_location, {
+        headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
+      });
+    }
+
+    const response = await fetch(photo.urls.full);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${photo.id}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download failed:', error);
+  }
+}
 
 document.getElementById("searchButton").addEventListener("click", searchImages);
 document.getElementById("searchInput").addEventListener("keypress", e => {
