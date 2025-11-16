@@ -72,7 +72,6 @@
       background: var(--primary-dark);
     }
 
-    /* Pagination */
     .pagination {
       text-align: center;
       margin: 1rem 0;
@@ -104,6 +103,7 @@
       position: relative;
       overflow: hidden;
       border-radius: var(--radius-lg);
+      cursor: pointer;
     }
 
     .grid-item img {
@@ -117,11 +117,16 @@
       transform: scale(1.05);
     }
 
-    /* Download button */
-    .download-btn {
+    .action-buttons {
       position: absolute;
       top: 8px;
       right: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .fullscreen-btn, .download-btn {
       background: rgba(0,0,0,0.6);
       padding: 6px 10px;
       border-radius: 6px;
@@ -129,13 +134,19 @@
       font-size: 0.9rem;
       cursor: pointer;
       text-decoration: none;
+      display: block;
+      text-align: center;
+      border: none;
     }
 
-    /* MODAL */
+    .fullscreen-btn:hover, .download-btn:hover {
+      background: rgba(0,0,0,0.8);
+    }
+
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.9);
       backdrop-filter: blur(8px);
       display: none;
       justify-content: center;
@@ -146,18 +157,22 @@
 
     .modal-content {
       background: #1e293b;
-      padding: 1rem;
+      padding: 1.5rem;
       border-radius: 1rem;
       transform: scale(0.6);
       opacity: 0;
       transition: 0.3s ease;
       max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
       text-align: center;
     }
 
     .modal img {
       max-width: 100%;
+      max-height: 70vh;
       border-radius: 1rem;
+      margin-bottom: 1rem;
     }
 
     .modal.show {
@@ -170,9 +185,46 @@
     }
 
     .modal-info {
-      margin-top: 0.5rem;
-      font-size: 1rem;
+      margin-top: 1rem;
+      font-size: 1.1rem;
       color: #dbeafe;
+      line-height: 1.8;
+    }
+
+    .modal-info a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+
+    .modal-info a:hover {
+      text-decoration: underline;
+    }
+
+    .photo-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #f1f5f9;
+    }
+
+    .photo-description {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: #cbd5e1;
+      font-style: italic;
+    }
+
+    .photo-details {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .detail-item {
+      font-size: 0.95rem;
+      color: #94a3b8;
     }
 
   </style>
@@ -193,7 +245,6 @@
     <div id="grid" class="grid"></div>
   </div>
 
-  <!-- MODAL -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <img id="modalImg" src="">
@@ -264,9 +315,17 @@ function renderImages(photos) {
     item.classList.add("grid-item");
 
     item.innerHTML = `
-      <img src="${photo.urls.small}" alt="">
-      <a class="download-btn" href="${photo.links.download}" target="_blank">⬇</a>
+      <img src="${photo.urls.small}" alt="${photo.alt_description || ''}">
+      <div class="action-buttons">
+        <button class="fullscreen-btn">⛶</button>
+        <a class="download-btn" href="${photo.links.download}" target="_blank">⬇</a>
+      </div>
     `;
+
+    item.querySelector(".fullscreen-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      openModal(photo);
+    });
 
     item.querySelector("img").addEventListener("click", () => openModal(photo));
 
@@ -274,17 +333,30 @@ function renderImages(photos) {
   });
 }
 
-/* MODAL */
 const modal = document.getElementById("modal");
 const modalImg = document.getElementById("modalImg");
 const modalInfo = document.getElementById("modalInfo");
 
 function openModal(photo) {
   modalImg.src = photo.urls.regular;
+  
+  const photoTitle = photo.description || photo.alt_description || "Untitled";
+  const photoDesc = photo.alt_description || "";
+  const photographer = photo.user.name || photo.user.username;
+  const photographerLink = photo.user.links.html;
+  const dimensions = `${photo.width} × ${photo.height}`;
+  const likes = photo.likes;
+  
   modalInfo.innerHTML = `
-    📸 <a href="${photo.user.links.html}" target="_blank" style="color:#93c5fd">${photo.user.name}</a>
-    <br>
-    ${photo.alt_description || ""}
+    <div class="photo-title">${photoTitle}</div>
+    ${photoDesc && photoDesc !== photoTitle ? `<div class="photo-description">${photoDesc}</div>` : ''}
+    <div>
+      📸 Photo by <a href="${photographerLink}" target="_blank">${photographer}</a>
+    </div>
+    <div class="photo-details">
+      <span class="detail-item">📏 ${dimensions}</span>
+      <span class="detail-item">❤️ ${likes} likes</span>
+    </div>
   `;
 
   modal.classList.add("show");
@@ -298,7 +370,6 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") modal.classList.remove("show");
 });
 
-/* Start */
 document.getElementById("searchButton").addEventListener("click", searchImages);
 document.getElementById("searchInput").addEventListener("keypress", e => {
   if (e.key === "Enter") searchImages();
