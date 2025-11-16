@@ -10,58 +10,26 @@
 
   <style>
     :root {
-      /* Colors */
       --primary: #3b82f6;
       --primary-dark: #2563eb;
       --primary-light: #60a5fa;
-      --secondary: #6366f1;
-      --accent: #8b5cf6;
 
-      /* Neutrals */
       --bg-primary: #0f172a;
       --bg-secondary: #1e293b;
-      --bg-tertiary: #334155;
+
       --text-primary: #f1f5f9;
       --text-secondary: #cbd5e1;
-      --text-tertiary: #94a3b8;
 
-      /* Borders / shadows */
-      --border: #475569;
-      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.16), 0 4px 6px rgba(0, 0, 0, 0.23);
-      --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-      --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.5);
-
-      /* Typography */
-      --font-body: "Oxanium", -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-heading: "Orbitron", "Oxanium", sans-serif;
-
-      /* Spacing */
-      --space-sm: 0.5rem;
-      --space-md: 1rem;
-      --space-lg: 1.5rem;
-
-      /* Border Radius */
       --radius-md: 0.5rem;
       --radius-lg: 1rem;
-
-      /* Transition */
-      --transition-fast: 0.15s ease;
       --transition-normal: 0.3s ease;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: var(--font-body);
-      background-color: var(--bg-primary);
+      font-family: "Oxanium";
+      background: var(--bg-primary);
       color: var(--text-primary);
-      min-height: 100vh;
-      padding: var(--space-lg);
+      padding: 1.5rem;
     }
 
     .container {
@@ -70,89 +38,148 @@
     }
 
     h1 {
-      font-family: var(--font-heading);
+      font-family: "Orbitron";
       font-size: 2.5rem;
       text-align: center;
-      margin-bottom: var(--space-lg);
+      margin-bottom: 1.5rem;
     }
 
     .search-card {
       display: flex;
-      gap: var(--space-md);
-      justify-content: center;
-      margin-bottom: var(--space-lg);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    .search-card input[type="text"] {
-      padding: var(--space-md);
-      font-size: 1rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      background-color: var(--bg-secondary);
-      color: var(--text-primary);
+    #searchInput {
       flex: 1;
+      padding: 0.8rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      color: white;
+      border: 1px solid #475569;
     }
 
-    .search-card button {
-      padding: var(--space-md) var(--space-lg);
-      font-size: 1rem;
+    #searchButton {
+      padding: 0.8rem 1.5rem;
       background: var(--primary);
-      color: white;
       border: none;
       border-radius: var(--radius-md);
+      color: white;
       cursor: pointer;
-      transition: all var(--transition-fast);
     }
 
-    .search-card button:hover {
+    #searchButton:hover {
       background: var(--primary-dark);
     }
 
-    .status {
+    /* Pagination */
+    .pagination {
       text-align: center;
-      margin-bottom: var(--space-md);
-      color: var(--text-secondary);
+      margin: 1rem 0;
+      font-size: 1.2rem;
+    }
+
+    .pagination button {
+      background: var(--primary);
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: var(--radius-md);
+      margin: 0 0.5rem;
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .pagination button:hover {
+      background: var(--primary-dark);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: var(--space-md);
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
     }
 
     .grid-item {
       position: relative;
       overflow: hidden;
       border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-      cursor: pointer;
     }
 
     .grid-item img {
       width: 100%;
-      height: 150px;
+      height: 170px;
       object-fit: cover;
-      transition: transform var(--transition-normal);
+      transition: 0.3s ease;
     }
 
     .grid-item:hover img {
       transform: scale(1.05);
-      box-shadow: var(--shadow-glow);
     }
 
-    .photographer-info {
+    /* Download button */
+    .download-btn {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 0.5rem;
-      background: rgba(0, 0, 0, 0.4);
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 10px;
+      border-radius: 6px;
       color: white;
       font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
     }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      padding: 2rem;
+    }
+
+    .modal-content {
+      background: #1e293b;
+      padding: 1rem;
+      border-radius: 1rem;
+      transform: scale(0.6);
+      opacity: 0;
+      transition: 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .modal img {
+      max-width: 100%;
+      border-radius: 1rem;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal.show .modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .modal-info {
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      color: #dbeafe;
+    }
+
   </style>
 </head>
+
 <body>
+
   <div class="container">
     <h1>Glassy Unsplash Search</h1>
 
@@ -161,108 +188,122 @@
       <button id="searchButton">Search</button>
     </div>
 
-    <div id="status" class="status">Enter a search query and hit “Search”</div>
+    <div class="pagination" id="pagination"></div>
 
     <div id="grid" class="grid"></div>
   </div>
 
-  <script>
-    // ** CONFIG **  
-    const ACCESS_KEY = "azxC7gJDxRQ8ChWOzJqTFDeOHJK-k0MWBPIU6bK__RI";
+  <!-- MODAL -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <img id="modalImg" src="">
+      <div class="modal-info" id="modalInfo"></div>
+    </div>
+  </div>
 
-    // Elements  
-    const searchInput = document.getElementById("searchInput");
-    const searchButton = document.getElementById("searchButton");
-    const statusEl = document.getElementById("status");
-    const grid = document.getElementById("grid");
+<script>
+const ACCESS_KEY = "azxC7gJDxRQ8ChWOzJqTFDeOHJK-k0MWBPIU6bK__RI";
 
-    // State  
-    let currentPage = 1;
-    let currentQuery = "";
+let currentPage = 1;
+let totalPages = 1;
+let currentQuery = "";
 
-    // Event listeners  
-    searchButton.addEventListener("click", () => {
-      doSearch();
-    });
+const grid = document.getElementById("grid");
+const pagination = document.getElementById("pagination");
 
-    searchInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        doSearch();
-      }
-    });
+async function searchImages() {
+  const query = document.getElementById("searchInput").value.trim();
+  if (!query) return;
 
-    // Search function  
-    async function doSearch() {
-      const query = searchInput.value.trim();
-      if (!query) {
-        statusEl.textContent = "Please enter a search term.";
-        return;
-      }
+  currentQuery = query;
+  currentPage = 1;
+  fetchAndRender();
+}
 
-      currentQuery = query;
-      currentPage = 1;
-      grid.innerHTML = "";  
-      statusEl.textContent = "Searching...";
-      await fetchAndDisplay(query, currentPage);
-    }
+async function fetchAndRender() {
+  const url = `https://api.unsplash.com/search/photos?page=${currentPage}&query=${encodeURIComponent(currentQuery)}&per_page=20`;
 
-    // Fetch + render  
-    async function fetchAndDisplay(query, page) {
-      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&page=${page}&per_page=20`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
+  });
 
-      try {
-        const response = await fetch(url, {
-          headers: {
-            Authorization: `Client-ID ${ACCESS_KEY}`
-          }
-        });
+  const data = await res.json();
+  totalPages = data.total_pages;
 
-        if (!response.ok) {
-          throw new Error("HTTP error, status = " + response.status);
-        }
+  renderImages(data.results);
+  renderPagination();
+}
 
-        const data = await response.json();
-        const results = data.results;
+function renderPagination() {
+  pagination.innerHTML = `
+    <button onclick="prevPage()">&lt;</button>
+    Page ${currentPage} of ${totalPages}
+    <button onclick="nextPage()">&gt;</button>
+  `;
+}
 
-        if (!results || results.length === 0) {
-          statusEl.textContent = `No results for "${query}".`;
-          return;
-        }
+function prevPage() {
+  if (currentPage > 1) {
+    currentPage--;
+    fetchAndRender();
+  }
+}
 
-        // Show total / how many loaded
-        statusEl.textContent = `Showing page ${page} – ${results.length} of ~${data.total} results`;
+function nextPage() {
+  if (currentPage < totalPages) {
+    currentPage++;
+    fetchAndRender();
+  }
+}
 
-        renderGrid(results);
+function renderImages(photos) {
+  grid.innerHTML = "";
 
-      } catch (error) {
-        console.error("Fetching error:", error);
-        statusEl.textContent = "Error fetching images. Check console.";
-      }
-    }
+  photos.forEach(photo => {
+    const item = document.createElement("div");
+    item.classList.add("grid-item");
 
-    // Render grid of photos  
-    function renderGrid(photos) {
-      photos.forEach((photo) => {
-        const div = document.createElement("div");
-        div.classList.add("grid-item");
+    item.innerHTML = `
+      <img src="${photo.urls.small}" alt="">
+      <a class="download-btn" href="${photo.links.download}" target="_blank">⬇</a>
+    `;
 
-        const img = document.createElement("img");
-        img.src = photo.urls.small;
-        img.alt = photo.alt_description || "Unsplash photo";
+    item.querySelector("img").addEventListener("click", () => openModal(photo));
 
-        const info = document.createElement("div");
-        info.classList.add("photographer-info");
-        info.innerHTML = `
-          By <a href="${photo.user.links.html}?utm_source=GlassySearch&utm_medium=referral" target="_blank" rel="noopener" style="color: white; text-decoration: underline;">
-            ${photo.user.name}
-          </a>
-        `;
+    grid.appendChild(item);
+  });
+}
 
-        div.appendChild(img);
-        div.appendChild(info);
-        grid.appendChild(div);
-      });
-    }
-  </script>
+/* MODAL */
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modalImg");
+const modalInfo = document.getElementById("modalInfo");
+
+function openModal(photo) {
+  modalImg.src = photo.urls.regular;
+  modalInfo.innerHTML = `
+    📸 <a href="${photo.user.links.html}" target="_blank" style="color:#93c5fd">${photo.user.name}</a>
+    <br>
+    ${photo.alt_description || ""}
+  `;
+
+  modal.classList.add("show");
+}
+
+modal.addEventListener("click", e => {
+  if (e.target === modal) modal.classList.remove("show");
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") modal.classList.remove("show");
+});
+
+/* Start */
+document.getElementById("searchButton").addEventListener("click", searchImages);
+document.getElementById("searchInput").addEventListener("keypress", e => {
+  if (e.key === "Enter") searchImages();
+});
+</script>
+
 </body>
 </html>
