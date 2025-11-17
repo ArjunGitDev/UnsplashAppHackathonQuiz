@@ -1,42 +1,58 @@
+<script>
 const ACCESS_KEY = "azxC7gJDxRQ8ChWOzJqTFDeOHJK-k0MWBPIU6bK__RI";
 
 let currentPage = 1;
 let totalPages = 1;
 let currentQuery = "";
 let currentView = "grid";
+
+// favorites: keep both id list (quick checks) and full photo objects (for download/modal/metadata)
 let favorites = [];
 let favoritePhotos = [];
 
+let lastModalPhoto = null; // holds the photo object currently shown in modal
+
+const grid = document.getElementById("grid");
+const pagination = document.getElementById("pagination");
+const resultsInfo = document.getElementById("resultsInfo");
+const modal = document.getElementById("modal");
+const modalBody = document.getElementById("modalBody");
+
+// --- Cookie helpers ---
 function setCookie(name, value, days = 365) {
   const expires = new Date();
   expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/`;
 }
 
 function getCookie(name) {
   const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
+  const ca = document.cookie.split(";");
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    while (c.charAt(0) === " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
   }
   return null;
 }
 
 function saveFavorites() {
-  setCookie('unsplash_favorites', JSON.stringify(favorites));
-  setCookie('unsplash_favorite_photos', JSON.stringify(favoritePhotos));
+  try {
+    setCookie("unsplash_favorites", JSON.stringify(favorites));
+    setCookie("unsplash_favorite_photos", JSON.stringify(favoritePhotos));
+  } catch (e) {
+    console.error("Failed to save favorites", e);
+  }
   updateFavoritesCount();
 }
 
 function loadFavorites() {
-  const savedFavorites = getCookie('unsplash_favorites');
-  const savedPhotos = getCookie('unsplash_favorite_photos');
+  const savedFavorites = getCookie("unsplash_favorites");
+  const savedPhotos = getCookie("unsplash_favorite_photos");
 
   if (savedFavorites) {
     try {
-      favorites = JSON.parse(savedFavorites);
+      favorites = JSON.parse(savedFavorites) || [];
     } catch (e) {
       favorites = [];
     }
@@ -44,7 +60,7 @@ function loadFavorites() {
 
   if (savedPhotos) {
     try {
-      favoritePhotos = JSON.parse(savedPhotos);
+      favoritePhotos = JSON.parse(savedPhotos) || [];
     } catch (e) {
       favoritePhotos = [];
     }
@@ -54,55 +70,30 @@ function loadFavorites() {
 }
 
 function updateFavoritesCount() {
-  const countElement = document.getElementById('favoritesCount');
-  const totalElement = document.getElementById('totalFavorites');
-  const lastAddedElement = document.getElementById('lastAdded');
+  // Header counter element: <span id="favoritesCount"></span>
+  const countElement = document.getElementById("favoritesCount");
+  if (countElement) countElement.textContent = favorites.length;
 
-  countElement.textContent = favorites.length;
-  totalElement.textContent = favorites.length;
+  // Optional: if you have a totalFavorites or lastAdded element, update them
+  const totalElement = document.getElementById("totalFavorites");
+  if (totalElement) totalElement.textContent = favorites.length;
 
-  if (favorites.length > 0 && favoritePhotos.length > 0) {
-    const lastPhoto = favoritePhotos[favoritePhotos.length - 1];
-    if (lastPhoto && lastPhoto.addedDate) {
-      const date = new Date(lastPhoto.addedDate);
-      lastAddedElement.textContent = date.toLocaleDateString();
+  const lastAddedElement = document.getElementById("lastAdded");
+  if (lastAddedElement) {
+    if (favoritePhotos.length > 0) {
+      const lastPhoto = favoritePhotos[favoritePhotos.length - 1];
+      if (lastPhoto && lastPhoto.addedDate) {
+        lastAddedElement.textContent = new Date(lastPhoto.addedDate).toLocaleDateString();
+      } else {
+        lastAddedElement.textContent = "Unknown";
+      }
+    } else {
+      lastAddedElement.textContent = "Never";
     }
-  } else {
-    lastAddedElement.textContent = 'Never';
   }
 }
 
-const grid = document.getElementById("grid");
-const favoritesGrid = document.getElementById("favoritesGrid");
-const pagination = document.getElementById("pagination");
-const resultsInfo = document.getElementById("resultsInfo");
-const modal = document.getElementById("modal");
-const modalBody = document.getElementById("modalBody");
-const emptyFavorites = document.getElementById("emptyFavorites");
-
-document.querySelectorAll('.nav-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    const tabName = tab.dataset.tab;
-    switchTab(tabName);
-  });
-});
-
-function switchTab(tabName) {
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-  document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-  document.getElementById(`${tabName}Tab`).classList.add('active');
-
-  if (tabName === 'favorites') {
-    renderFavorites();
-  }
-}
-
-function switchToExplore() {
-  switchTab('explore');
-}
-
+// --- UI Event wiring ---
 document.getElementById("searchBtn").addEventListener("click", performSearch);
 document.getElementById("randomBtn").addEventListener("click", getRandomPhotos);
 document.getElementById("searchInput").addEventListener("keypress", e => {
@@ -122,7 +113,6 @@ document.querySelectorAll(".view-btn").forEach(btn => {
     btn.classList.add("active");
     currentView = btn.dataset.view;
     grid.className = currentView;
-    favoritesGrid.className = currentView;
   });
 });
 
@@ -134,35 +124,21 @@ document.getElementById("filtersToggle").addEventListener("click", () => {
 });
 
 ["orientationFilter", "colorFilter", "sortFilter", "perPageFilter"].forEach(id => {
-  document.getElementById(id).addEventListener("change", () => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("change", () => {
     if (currentQuery) performSearch();
   });
-});
-
-document.getElementById("clearFavoritesBtn").addEventListener("click", () => {
-  if (favorites.length === 0) {
-    showToast("No favorites to clear");
-    return;
-  }
-
-  if (confirm(`Are you sure you want to clear all ${favorites.length} favorites?`)) {
-    favorites = [];
-    favoritePhotos = [];
-    saveFavorites();
-    renderFavorites();
-    showToast("✅ All favorites cleared");
-  }
 });
 
 document.getElementById("modalClose").addEventListener("click", closeModal);
 modal.addEventListener("click", e => {
   if (e.target === modal) closeModal();
 });
-
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") closeModal();
 });
 
+// --- Main Functions ---
 async function performSearch() {
   const query = document.getElementById("searchInput").value.trim();
   if (!query) {
@@ -178,12 +154,17 @@ async function performSearch() {
 async function fetchAndRender() {
   showLoading();
 
-  const orientation = document.getElementById("orientationFilter").value;
-  const color = document.getElementById("colorFilter").value;
-  const orderBy = document.getElementById("sortFilter").value;
-  const perPage = document.getElementById("perPageFilter").value;
+  const orientationEl = document.getElementById("orientationFilter");
+  const colorEl = document.getElementById("colorFilter");
+  const orderEl = document.getElementById("sortFilter");
+  const perPageEl = document.getElementById("perPageFilter");
 
-  let url = `https:
+  const orientation = orientationEl ? orientationEl.value : "";
+  const color = colorEl ? colorEl.value : "";
+  const orderBy = orderEl ? orderEl.value : "";
+  const perPage = perPageEl ? perPageEl.value || 30 : 30;
+
+  let url = `https://api.unsplash.com/search/photos?page=${currentPage}&query=${encodeURIComponent(currentQuery)}&per_page=${perPage}`;
   if (orientation) url += `&orientation=${orientation}`;
   if (color) url += `&color=${color}`;
   if (orderBy) url += `&order_by=${orderBy}`;
@@ -193,12 +174,14 @@ async function fetchAndRender() {
       headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
     });
 
-    const data = await res.json();
-    totalPages = data.total_pages;
+    if (!res.ok) throw new Error(`Unsplash API error: ${res.status}`);
 
-    renderImages(data.results);
+    const data = await res.json();
+    totalPages = data.total_pages || 1;
+
+    renderImages(data.results || []);
     renderPagination();
-    updateResultsInfo(data.total, perPage);
+    updateResultsInfo(data.total || 0, Number(perPage));
   } catch (error) {
     showToast("Error fetching images. Please try again.");
     console.error(error);
@@ -209,16 +192,18 @@ async function getRandomPhotos() {
   showLoading();
 
   try {
-    const res = await fetch(`https:
+    const res = await fetch(`https://api.unsplash.com/photos/random?count=30`, {
       headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
     });
+
+    if (!res.ok) throw new Error(`Unsplash API error: ${res.status}`);
 
     const data = await res.json();
     currentQuery = "random";
     currentPage = 1;
     totalPages = 1;
 
-    renderImages(data);
+    renderImages(data || []);
     pagination.style.display = "none";
     updateResultsInfo(30, 30);
     showToast("✨ Random photos loaded!");
@@ -265,45 +250,35 @@ function createPhotoItem(photo) {
     </div>
   `;
 
+  // fullscreen / modal
   item.querySelector(".fullscreen-btn").addEventListener("click", e => {
     e.stopPropagation();
     openImageModal(photo);
   });
 
+  // download
   item.querySelector(".download-btn").addEventListener("click", e => {
     e.stopPropagation();
     downloadImage(photo);
   });
 
+  // info
   item.querySelector(".info-btn").addEventListener("click", e => {
     e.stopPropagation();
     openInfoModal(photo);
   });
 
+  // favorite button (store full photo)
   item.querySelector(".favorite-btn").addEventListener("click", e => {
     e.stopPropagation();
-    toggleFavorite(photo, e.currentTarget);
+    const btn = e.currentTarget;
+    toggleFavorite(photo, btn);
   });
 
+  // click on image opens modal
   item.querySelector("img").addEventListener("click", () => openImageModal(photo));
 
   return item;
-}
-
-function renderFavorites() {
-  if (favorites.length === 0) {
-    favoritesGrid.innerHTML = '';
-    emptyFavorites.classList.add('show');
-    return;
-  }
-
-  emptyFavorites.classList.remove('show');
-  favoritesGrid.innerHTML = "";
-
-  favoritePhotos.forEach(photo => {
-    const item = createPhotoItem(photo);
-    favoritesGrid.appendChild(item);
-  });
 }
 
 function renderPagination() {
@@ -336,10 +311,11 @@ function changePage(direction) {
 function updateResultsInfo(total, perPage) {
   const start = (currentPage - 1) * perPage + 1;
   const end = Math.min(currentPage * perPage, total);
-  resultsInfo.textContent = `Showing ${start}-${end} of ${total.toLocaleString()} results`;
+  resultsInfo.textContent = `Showing ${start}-${end} of ${Number(total).toLocaleString()} results`;
 }
 
 function openImageModal(photo) {
+  lastModalPhoto = photo; // store current photo for modal download
   modalBody.innerHTML = `
     <img class="modal-image" src="${photo.urls.regular}" alt="${photo.alt_description || ''}">
     <div class="info-section">
@@ -368,14 +344,25 @@ function openImageModal(photo) {
       </div>
     </div>
     <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-      <button class="btn" onclick="downloadImageFromModal('${photo.id}')" style="flex: 1;">
+      <button class="btn" id="modalDownloadBtn" style="flex: 1;">
         <span>⬇ Download</span>
       </button>
-      <button class="btn" onclick="window.open('${photo.links.html}?utm_source=glassy_app&utm_medium=referral', '_blank')" style="flex: 1; background: linear-gradient(135deg, var(--secondary), var(--accent));">
+      <button class="btn" id="modalViewBtn" style="flex: 1; background: linear-gradient(135deg, var(--secondary), var(--accent));">
         <span>🔗 View on Unsplash</span>
       </button>
     </div>
   `;
+  // attach listeners to modal buttons
+  const downloadBtn = document.getElementById("modalDownloadBtn");
+  if (downloadBtn) downloadBtn.addEventListener("click", () => {
+    if (lastModalPhoto) downloadImage(lastModalPhoto);
+  });
+
+  const viewBtn = document.getElementById("modalViewBtn");
+  if (viewBtn) viewBtn.addEventListener("click", () => {
+    if (lastModalPhoto) window.open(`${lastModalPhoto.links.html}?utm_source=glassy_app&utm_medium=referral`, "_blank");
+  });
+
   modal.classList.add("show");
 }
 
@@ -389,16 +376,24 @@ function closeModal() {
 
 async function downloadImage(photo) {
   try {
-    if (photo.links.download_location) {
-      await fetch(photo.links.download_location, {
-        headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
-      });
+    // Call download_location to register download with Unsplash (if available)
+    if (photo.links && photo.links.download_location) {
+      try {
+        await fetch(photo.links.download_location, {
+          headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
+        });
+      } catch (e) {
+        // Not critical if this fails; continue to fetch image
+        console.warn("Failed to call download_location:", e);
+      }
     }
 
     const response = await fetch(photo.urls.full);
+    if (!response.ok) throw new Error("Failed to fetch full image");
+
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `unsplash-${photo.id}.jpg`;
     document.body.appendChild(a);
@@ -413,32 +408,35 @@ async function downloadImage(photo) {
   }
 }
 
-function downloadImageFromModal(photoId) {
-  const photo = favoritePhotos.find(p => p.id === photoId);
-  if (photo) {
-    downloadImage(photo);
-  }
-}
-
+// toggleFavorite now accepts a full photo object and the clicked button element
 function toggleFavorite(photo, btn) {
-  const index = favorites.indexOf(photo.id);
+  const id = photo.id;
+  const index = favorites.indexOf(id);
+
   if (index > -1) {
+    // remove
     favorites.splice(index, 1);
-    const photoIndex = favoritePhotos.findIndex(p => p.id === photo.id);
-    if (photoIndex > -1) {
-      favoritePhotos.splice(photoIndex, 1);
+    const photoIndex = favoritePhotos.findIndex(p => p.id === id);
+    if (photoIndex > -1) favoritePhotos.splice(photoIndex, 1);
+    if (btn) {
+      btn.textContent = "🤍";
+      btn.classList.remove("active");
     }
-    btn.textContent = "🤍";
-    btn.classList.remove('active');
     showToast("Removed from favorites");
   } else {
-    favorites.push(photo.id);
-    photo.addedDate = new Date().toISOString();
-    favoritePhotos.push(photo);
-    btn.textContent = "❤️";
-    btn.classList.add('active');
+    // add
+    favorites.push(id);
+    // attach addedDate if not present
+    const copy = Object.assign({}, photo);
+    copy.addedDate = new Date().toISOString();
+    favoritePhotos.push(copy);
+    if (btn) {
+      btn.textContent = "❤️";
+      btn.classList.add("active");
+    }
     showToast("❤️ Added to favorites");
   }
+
   saveFavorites();
 }
 
@@ -458,7 +456,9 @@ function showToast(message) {
   }, 3000);
 }
 
+// --- Initial load ---
 window.addEventListener("load", () => {
   loadFavorites();
   showToast("🌟 Welcome! Try searching or click Random for inspiration");
 });
+</script>
