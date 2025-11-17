@@ -10,13 +10,12 @@
 
 <body>
   <div class="container">
-    <!-- Hero Section -->
+
     <div class="hero">
       <h1>Discover Stunning Photography</h1>
       <p>Explore millions of beautiful, free images from talented creators worldwide</p>
     </div>
 
-    <!-- Navigation Tabs -->
     <div class="nav-tabs">
       <button class="nav-tab active" data-tab="explore">🔍 Explore</button>
       <button class="nav-tab" data-tab="favorites">
@@ -27,9 +26,8 @@
       </button>
     </div>
 
-    <!-- Explore Tab -->
     <div id="exploreTab" class="tab-content active">
-      <!-- Search Section -->
+
       <div class="search-section">
         <div class="search-container">
           <div class="search-wrapper">
@@ -40,7 +38,6 @@
           <button class="btn" id="randomBtn" style="background: linear-gradient(135deg, var(--secondary), var(--accent));"><span>✨ Random</span></button>
         </div>
 
-        <!-- Quick Actions -->
         <div class="quick-actions">
           <div class="chip" data-search="nature">🌿 Nature</div>
           <div class="chip" data-search="architecture">🏛️ Architecture</div>
@@ -52,7 +49,6 @@
           <div class="chip" data-search="business">💼 Business</div>
         </div>
 
-        <!-- Filters -->
         <div class="filters">
           <div class="filters-header" id="filtersToggle">
             <h3>🎛️ Advanced Filters</h3>
@@ -104,7 +100,6 @@
         </div>
       </div>
 
-      <!-- Controls -->
       <div class="controls">
         <div class="view-toggle">
           <button class="view-btn active" data-view="grid">📱 Grid</button>
@@ -113,14 +108,11 @@
         <div class="results-info" id="resultsInfo"></div>
       </div>
 
-      <!-- Grid -->
       <div id="grid" class="grid"></div>
 
-      <!-- Pagination -->
       <div class="pagination" id="pagination" style="display: none;"></div>
     </div>
 
-    <!-- Favorites Tab -->
     <div id="favoritesTab" class="tab-content">
       <div class="favorites-header">
         <div>
@@ -149,10 +141,8 @@
         </div>
       </div>
 
-      <!-- Favorites Grid -->
       <div id="favoritesGrid" class="grid"></div>
 
-      <!-- Empty State -->
       <div id="emptyFavorites" class="empty-state">
         <div class="empty-icon">💔</div>
         <h3>No favorites yet</h3>
@@ -164,7 +154,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
