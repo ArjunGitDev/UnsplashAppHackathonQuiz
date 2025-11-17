@@ -1,4 +1,3 @@
-<script>
 const ACCESS_KEY = "azxC7gJDxRQ8ChWOzJqTFDeOHJK-k0MWBPIU6bK__RI";
 
 let currentPage = 1;
@@ -461,4 +460,3 @@ window.addEventListener("load", () => {
   loadFavorites();
   showToast("🌟 Welcome! Try searching or click Random for inspiration");
 });
-</script>
