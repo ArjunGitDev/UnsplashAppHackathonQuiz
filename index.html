@@ -4,693 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Glassy Unsplash Explorer</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --bg-dark: #0a0e27;
-      --bg-gradient-1: #1a1f3a;
-      --bg-gradient-2: #2d1b3d;
-      
-      --glass-bg: rgba(255, 255, 255, 0.05);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --glass-hover: rgba(255, 255, 255, 0.08);
-      
-      --primary: #667eea;
-      --primary-light: #818cf8;
-      --secondary: #f093fb;
-      --accent: #4facfe;
-      
-      --text: #ffffff;
-      --text-muted: rgba(255, 255, 255, 0.7);
-      --text-dim: rgba(255, 255, 255, 0.5);
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg-dark);
-      color: var(--text);
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(240, 147, 251, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(79, 172, 254, 0.1) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Hero Section */
-    .hero {
-      text-align: center;
-      padding: 3rem 0 2rem;
-      animation: fadeInDown 0.8s ease;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--primary-light), var(--secondary), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      margin-bottom: 2.5rem;
-    }
-
-    /* Search Section */
-    .search-section {
-      margin-bottom: 2rem;
-    }
-
-    .search-container {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      animation: fadeInUp 0.8s ease 0.2s both;
-    }
-
-    .search-wrapper {
-      flex: 1;
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 1.2rem 1.5rem 1.2rem 3.5rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      color: var(--text);
-      font-size: 1.1rem;
-      backdrop-filter: blur(20px);
-      transition: all 0.3s ease;
-      outline: none;
-    }
-
-    .search-input:focus {
-      background: var(--glass-hover);
-      border-color: var(--primary);
-      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
-      transform: translateY(-2px);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 1.2rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.4rem;
-      color: var(--text-dim);
-      pointer-events: none;
-    }
-
-    .btn {
-      padding: 1.2rem 2.5rem;
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      border: none;
-      border-radius: 20px;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, var(--primary-light), var(--secondary));
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .btn:hover::before {
-      opacity: 1;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn span {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Quick Actions */
-    .quick-actions {
-      display: flex;
-      gap: 0.8rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-      animation: fadeInUp 0.8s ease 0.3s both;
-    }
-
-    .chip {
-      padding: 0.7rem 1.3rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 50px;
-      color: var(--text);
-      font-size: 0.95rem;
-      cursor: pointer;
-      backdrop-filter: blur(20px);
-      transition: all 0.3s ease;
-    }
-
-    .chip:hover {
-      background: var(--glass-hover);
-      border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
-    }
-
-    /* Filters Panel */
-    .filters {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 1.5rem;
-      backdrop-filter: blur(20px);
-      margin-bottom: 2rem;
-      animation: fadeInUp 0.8s ease 0.4s both;
-    }
-
-    .filters-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      cursor: pointer;
-    }
-
-    .filters-header h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    .filters-content {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1rem;
-    }
-
-    .filter-group label {
-      display: block;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .filter-group select, .filter-group input {
-      width: 100%;
-      padding: 0.8rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      color: var(--text);
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .filter-group select:hover, .filter-group input:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--primary);
-    }
-
-    /* View Toggle */
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .view-toggle {
-      display: flex;
-      gap: 0.5rem;
-      background: var(--glass-bg);
-      padding: 0.4rem;
-      border-radius: 12px;
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-    }
-
-    .view-btn {
-      padding: 0.6rem 1.2rem;
-      background: transparent;
-      border: none;
-      border-radius: 8px;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 0.95rem;
-    }
-
-    .view-btn.active {
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      color: white;
-    }
-
-    .results-info {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    /* Grid Layouts */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .masonry {
-      column-count: 4;
-      column-gap: 1.5rem;
-    }
-
-    @media (max-width: 1200px) {
-      .masonry { column-count: 3; }
-    }
-
-    @media (max-width: 768px) {
-      .masonry { column-count: 2; }
-      .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-    }
-
-    @media (max-width: 480px) {
-      .masonry { column-count: 1; }
-    }
-
-    /* Grid Item */
-    .grid-item {
-      position: relative;
-      overflow: hidden;
-      border-radius: 20px;
-      cursor: pointer;
-      break-inside: avoid;
-      margin-bottom: 1.5rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(20px);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .grid-item:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-      border-color: var(--primary);
-    }
-
-    .grid-item img {
-      width: 100%;
-      display: block;
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .grid-item:hover img {
-      transform: scale(1.1);
-    }
-
-    .image-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 1.5rem;
-    }
-
-    .grid-item:hover .image-overlay {
-      opacity: 1;
-    }
-
-    .photographer {
-      color: white;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .image-stats {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .action-buttons {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      display: flex;
-      gap: 8px;
-      opacity: 0;
-      transform: translateY(-10px);
-      transition: all 0.3s ease;
-    }
-
-    .grid-item:hover .action-buttons {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      color: white;
-      font-size: 1.1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .icon-btn:hover {
-      background: rgba(0, 0, 0, 0.8);
-      transform: scale(1.1);
-      border-color: var(--primary);
-    }
-
-    /* Pagination */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      margin: 2rem 0;
-      animation: fadeIn 0.6s ease;
-    }
-
-    .page-btn {
-      padding: 0.8rem 1.5rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      color: var(--text);
-      font-size: 1rem;
-      cursor: pointer;
-      backdrop-filter: blur(20px);
-      transition: all 0.3s ease;
-    }
-
-    .page-btn:hover:not(:disabled) {
-      background: var(--glass-hover);
-      border-color: var(--primary);
-      transform: translateY(-2px);
-    }
-
-    .page-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .page-info {
-      padding: 0.8rem 1.5rem;
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      border-radius: 12px;
-      font-weight: 600;
-    }
-
-    /* Modal */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(20px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 2rem;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-content {
-      max-width: 90vw;
-      max-height: 90vh;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      overflow: hidden;
-      backdrop-filter: blur(40px);
-      animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid var(--glass-border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .modal-close {
-      width: 40px;
-      height: 40px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      color: var(--text);
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .modal-close:hover {
-      background: var(--glass-hover);
-      transform: rotate(90deg);
-    }
-
-    .modal-body {
-      padding: 2rem;
-      overflow-y: auto;
-      max-height: calc(90vh - 100px);
-    }
-
-    .modal-image {
-      width: 100%;
-      max-height: 60vh;
-      object-fit: contain;
-      border-radius: 16px;
-      margin-bottom: 1.5rem;
-    }
-
-    .modal-info {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .info-section {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 1.2rem;
-      border-radius: 16px;
-      border: 1px solid var(--glass-border);
-    }
-
-    .info-section h4 {
-      font-size: 1.1rem;
-      margin-bottom: 0.8rem;
-      color: var(--primary-light);
-    }
-
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--glass-border);
-    }
-
-    .info-row:last-child {
-      border-bottom: none;
-    }
-
-    .info-label {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    .info-value {
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text-muted);
-    }
-
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid var(--glass-border);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    /* Toast Notifications */
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: var(--glass-bg);
-      backdrop-filter: blur(40px);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 1rem 1.5rem;
-      color: var(--text);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-      z-index: 2000;
-      animation: slideInRight 0.4s ease;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(100px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 12px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--glass-bg);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 6px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--primary-light);
-    }
-
-    /* Skeleton Loader */
-    .skeleton {
-      background: linear-gradient(90deg, var(--glass-bg) 25%, var(--glass-hover) 50%, var(--glass-bg) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 20px;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .filters-content.collapsed {
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -701,95 +16,152 @@
       <p>Explore millions of beautiful, free images from talented creators worldwide</p>
     </div>
 
-    <!-- Search Section -->
-    <div class="search-section">
-      <div class="search-container">
-        <div class="search-wrapper">
-          <span class="search-icon">🔍</span>
-          <input class="search-input" id="searchInput" type="text" placeholder="Search for images..." />
-        </div>
-        <button class="btn" id="searchBtn"><span>Search</span></button>
-        <button class="btn" id="randomBtn" style="background: linear-gradient(135deg, var(--secondary), var(--accent));"><span>✨ Random</span></button>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <div class="chip" data-search="nature">🌿 Nature</div>
-        <div class="chip" data-search="architecture">🏛️ Architecture</div>
-        <div class="chip" data-search="technology">💻 Technology</div>
-        <div class="chip" data-search="animals">🐾 Animals</div>
-        <div class="chip" data-search="food">🍜 Food</div>
-        <div class="chip" data-search="travel">✈️ Travel</div>
-        <div class="chip" data-search="fashion">👗 Fashion</div>
-        <div class="chip" data-search="business">💼 Business</div>
-      </div>
-
-      <!-- Filters -->
-      <div class="filters">
-        <div class="filters-header" id="filtersToggle">
-          <h3>🎛️ Advanced Filters</h3>
-          <span id="toggleIcon">▼</span>
-        </div>
-        <div class="filters-content" id="filtersContent">
-          <div class="filter-group">
-            <label>Orientation</label>
-            <select id="orientationFilter">
-              <option value="">All</option>
-              <option value="landscape">Landscape</option>
-              <option value="portrait">Portrait</option>
-              <option value="squarish">Square</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label>Color</label>
-            <select id="colorFilter">
-              <option value="">All Colors</option>
-              <option value="black_and_white">Black & White</option>
-              <option value="black">Black</option>
-              <option value="white">White</option>
-              <option value="yellow">Yellow</option>
-              <option value="orange">Orange</option>
-              <option value="red">Red</option>
-              <option value="purple">Purple</option>
-              <option value="magenta">Magenta</option>
-              <option value="green">Green</option>
-              <option value="teal">Teal</option>
-              <option value="blue">Blue</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label>Sort By</label>
-            <select id="sortFilter">
-              <option value="relevant">Relevant</option>
-              <option value="latest">Latest</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label>Per Page</label>
-            <select id="perPageFilter">
-              <option value="20">20</option>
-              <option value="30">30</option>
-              <option value="50">50</option>
-            </select>
-          </div>
-        </div>
-      </div>
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-tab="explore">🔍 Explore</button>
+      <button class="nav-tab" data-tab="favorites">
+        <span class="favorites-badge-wrapper">
+          ❤️ Favorites
+          <span class="favorites-count" id="favoritesCount">0</span>
+        </span>
+      </button>
     </div>
 
-    <!-- Controls -->
-    <div class="controls">
-      <div class="view-toggle">
-        <button class="view-btn active" data-view="grid">📱 Grid</button>
-        <button class="view-btn" data-view="masonry">🎨 Masonry</button>
+    <!-- Explore Tab -->
+    <div id="exploreTab" class="tab-content active">
+      <!-- Search Section -->
+      <div class="search-section">
+        <div class="search-container">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input class="search-input" id="searchInput" type="text" placeholder="Search for images..." />
+          </div>
+          <button class="btn" id="searchBtn"><span>Search</span></button>
+          <button class="btn" id="randomBtn" style="background: linear-gradient(135deg, var(--secondary), var(--accent));"><span>✨ Random</span></button>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <div class="chip" data-search="nature">🌿 Nature</div>
+          <div class="chip" data-search="architecture">🏛️ Architecture</div>
+          <div class="chip" data-search="technology">💻 Technology</div>
+          <div class="chip" data-search="animals">🐾 Animals</div>
+          <div class="chip" data-search="food">🍜 Food</div>
+          <div class="chip" data-search="travel">✈️ Travel</div>
+          <div class="chip" data-search="fashion">👗 Fashion</div>
+          <div class="chip" data-search="business">💼 Business</div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+          <div class="filters-header" id="filtersToggle">
+            <h3>🎛️ Advanced Filters</h3>
+            <span id="toggleIcon">▼</span>
+          </div>
+          <div class="filters-content" id="filtersContent">
+            <div class="filter-group">
+              <label>Orientation</label>
+              <select id="orientationFilter">
+                <option value="">All</option>
+                <option value="landscape">Landscape</option>
+                <option value="portrait">Portrait</option>
+                <option value="squarish">Square</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Color</label>
+              <select id="colorFilter">
+                <option value="">All Colors</option>
+                <option value="black_and_white">Black & White</option>
+                <option value="black">Black</option>
+                <option value="white">White</option>
+                <option value="yellow">Yellow</option>
+                <option value="orange">Orange</option>
+                <option value="red">Red</option>
+                <option value="purple">Purple</option>
+                <option value="magenta">Magenta</option>
+                <option value="green">Green</option>
+                <option value="teal">Teal</option>
+                <option value="blue">Blue</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Sort By</label>
+              <select id="sortFilter">
+                <option value="relevant">Relevant</option>
+                <option value="latest">Latest</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Per Page</label>
+              <select id="perPageFilter">
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="results-info" id="resultsInfo"></div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="view-toggle">
+          <button class="view-btn active" data-view="grid">📱 Grid</button>
+          <button class="view-btn" data-view="masonry">🎨 Masonry</button>
+        </div>
+        <div class="results-info" id="resultsInfo"></div>
+      </div>
+
+      <!-- Grid -->
+      <div id="grid" class="grid"></div>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination" style="display: none;"></div>
     </div>
 
-    <!-- Grid -->
-    <div id="grid" class="grid"></div>
+    <!-- Favorites Tab -->
+    <div id="favoritesTab" class="tab-content">
+      <div class="favorites-header">
+        <div>
+          <h2>Your Favorites Collection</h2>
+          <p class="favorites-subtitle">Images you've saved for later</p>
+        </div>
+        <button class="btn btn-clear" id="clearFavoritesBtn" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+          <span>🗑️ Clear All</span>
+        </button>
+      </div>
 
-    <!-- Pagination -->
-    <div class="pagination" id="pagination" style="display: none;"></div>
+      <div class="favorites-stats">
+        <div class="stat-card">
+          <div class="stat-icon">📸</div>
+          <div class="stat-content">
+            <div class="stat-value" id="totalFavorites">0</div>
+            <div class="stat-label">Total Favorites</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-content">
+            <div class="stat-value" id="lastAdded">Never</div>
+            <div class="stat-label">Last Added</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Favorites Grid -->
+      <div id="favoritesGrid" class="grid"></div>
+
+      <!-- Empty State -->
+      <div id="emptyFavorites" class="empty-state">
+        <div class="empty-icon">💔</div>
+        <h3>No favorites yet</h3>
+        <p>Start exploring and click the heart icon on images you love!</p>
+        <button class="btn" onclick="switchToExplore()">
+          <span>🔍 Start Exploring</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Modal -->
@@ -803,329 +175,6 @@
     </div>
   </div>
 
-  <script>
-    const ACCESS_KEY = "azxC7gJDxRQ8ChWOzJqTFDeOHJK-k0MWBPIU6bK__RI";
-    
-    let currentPage = 1;
-    let totalPages = 1;
-    let currentQuery = "";
-    let currentView = "grid";
-    let favorites = [];
-
-    const grid = document.getElementById("grid");
-    const pagination = document.getElementById("pagination");
-    const resultsInfo = document.getElementById("resultsInfo");
-    const modal = document.getElementById("modal");
-    const modalBody = document.getElementById("modalBody");
-
-    // Event Listeners
-    document.getElementById("searchBtn").addEventListener("click", performSearch);
-    document.getElementById("randomBtn").addEventListener("click", getRandomPhotos);
-    document.getElementById("searchInput").addEventListener("keypress", e => {
-      if (e.key === "Enter") performSearch();
-    });
-
-    document.querySelectorAll(".chip").forEach(chip => {
-      chip.addEventListener("click", () => {
-        document.getElementById("searchInput").value = chip.dataset.search;
-        performSearch();
-      });
-    });
-
-    document.querySelectorAll(".view-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentView = btn.dataset.view;
-        grid.className = currentView;
-      });
-    });
-
-    document.getElementById("filtersToggle").addEventListener("click", () => {
-      const content = document.getElementById("filtersContent");
-      const icon = document.getElementById("toggleIcon");
-      content.classList.toggle("collapsed");
-      icon.textContent = content.classList.contains("collapsed") ? "▶" : "▼";
-    });
-
-    ["orientationFilter", "colorFilter", "sortFilter", "perPageFilter"].forEach(id => {
-      document.getElementById(id).addEventListener("change", () => {
-        if (currentQuery) performSearch();
-      });
-    });
-
-    document.getElementById("modalClose").addEventListener("click", closeModal);
-    modal.addEventListener("click", e => {
-      if (e.target === modal) closeModal();
-    });
-
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") closeModal();
-    });
-
-    // Main Functions
-    async function performSearch() {
-      const query = document.getElementById("searchInput").value.trim();
-      if (!query) {
-        showToast("Please enter a search term");
-        return;
-      }
-
-      currentQuery = query;
-      currentPage = 1;
-      await fetchAndRender();
-    }
-
-    async function fetchAndRender() {
-      showLoading();
-      
-      const orientation = document.getElementById("orientationFilter").value;
-      const color = document.getElementById("colorFilter").value;
-      const orderBy = document.getElementById("sortFilter").value;
-      const perPage = document.getElementById("perPageFilter").value;
-
-      let url = `https://api.unsplash.com/search/photos?page=${currentPage}&query=${encodeURIComponent(currentQuery)}&per_page=${perPage}`;
-      if (orientation) url += `&orientation=${orientation}`;
-      if (color) url += `&color=${color}`;
-      if (orderBy) url += `&order_by=${orderBy}`;
-
-      try {
-        const res = await fetch(url, {
-          headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
-        });
-
-        const data = await res.json();
-        totalPages = data.total_pages;
-        
-        renderImages(data.results);
-        renderPagination();
-        updateResultsInfo(data.total, perPage);
-      } catch (error) {
-        showToast("Error fetching images. Please try again.");
-        console.error(error);
-      }
-    }
-
-    async function getRandomPhotos() {
-      showLoading();
-      
-      try {
-        const res = await fetch(`https://api.unsplash.com/photos/random?count=30`, {
-          headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
-        });
-
-        const data = await res.json();
-        currentQuery = "random";
-        currentPage = 1;
-        totalPages = 1;
-        
-        renderImages(data);
-        pagination.style.display = "none";
-        updateResultsInfo(30, 30);
-        showToast("✨ Random photos loaded!");
-      } catch (error) {
-        showToast("Error fetching random images.");
-        console.error(error);
-      }
-    }
-
-    function renderImages(photos) {
-      if (!photos || photos.length === 0) {
-        grid.innerHTML = '<div class="loading"><h3>No images found</h3><p>Try a different search term</p></div>';
-        return;
-      }
-
-      grid.innerHTML = "";
-
-      photos.forEach(photo => {
-        const item = document.createElement("div");
-        item.classList.add("grid-item");
-
-        const isFavorite = favorites.includes(photo.id);
-
-        item.innerHTML = `
-          <img src="${photo.urls.small}" alt="${photo.alt_description || ''}" loading="lazy">
-          <div class="image-overlay">
-            <div class="photographer">📸 ${photo.user.name}</div>
-            <div class="image-stats">
-              <span>❤️ ${photo.likes}</span>
-              <span>👁️ ${photo.views || 'N/A'}</span>
-            </div>
-          </div>
-          <div class="action-buttons">
-            <button class="icon-btn favorite-btn" data-id="${photo.id}">${isFavorite ? '❤️' : '🤍'}</button>
-            <button class="icon-btn fullscreen-btn">⛶</button>
-            <button class="icon-btn download-btn">⬇</button>
-            <button class="icon-btn info-btn">ℹ️</button>
-          </div>
-        `;
-
-        item.querySelector(".fullscreen-btn").addEventListener("click", e => {
-          e.stopPropagation();
-          openImageModal(photo);
-        });
-
-        item.querySelector(".download-btn").addEventListener("click", e => {
-          e.stopPropagation();
-          downloadImage(photo);
-        });
-
-        item.querySelector(".info-btn").addEventListener("click", e => {
-          e.stopPropagation();
-          openInfoModal(photo);
-        });
-
-        item.querySelector(".favorite-btn").addEventListener("click", e => {
-          e.stopPropagation();
-          toggleFavorite(photo.id, e.currentTarget);
-        });
-
-        item.querySelector("img").addEventListener("click", () => openImageModal(photo));
-
-        grid.appendChild(item);
-      });
-    }
-
-    function renderPagination() {
-      if (totalPages <= 1) {
-        pagination.style.display = "none";
-        return;
-      }
-
-      pagination.style.display = "flex";
-      pagination.innerHTML = `
-        <button class="page-btn" onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>
-          ← Previous
-        </button>
-        <div class="page-info">Page ${currentPage} of ${totalPages}</div>
-        <button class="page-btn" onclick="changePage(1)" ${currentPage === totalPages ? 'disabled' : ''}>
-          Next →
-        </button>
-      `;
-    }
-
-    function changePage(direction) {
-      const newPage = currentPage + direction;
-      if (newPage >= 1 && newPage <= totalPages) {
-        currentPage = newPage;
-        fetchAndRender();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-
-    function updateResultsInfo(total, perPage) {
-      const start = (currentPage - 1) * perPage + 1;
-      const end = Math.min(currentPage * perPage, total);
-      resultsInfo.textContent = `Showing ${start}-${end} of ${total.toLocaleString()} results`;
-    }
-
-    function openImageModal(photo) {
-      modalBody.innerHTML = `
-        <img class="modal-image" src="${photo.urls.regular}" alt="${photo.alt_description || ''}">
-        <div class="info-section">
-          <h4>${photo.description || photo.alt_description || 'Untitled'}</h4>
-          <div class="info-row">
-            <span class="info-label">Photographer</span>
-            <span class="info-value"><a href="${photo.user.links.html}?utm_source=glassy_app&utm_medium=referral" target="_blank" style="color: var(--primary-light);">${photo.user.name}</a></span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Dimensions</span>
-            <span class="info-value">${photo.width} × ${photo.height} px</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Likes</span>
-            <span class="info-value">❤️ ${photo.likes}</span>
-          </div>
-          ${photo.location?.name ? `
-          <div class="info-row">
-            <span class="info-label">Location</span>
-            <span class="info-value">📍 ${photo.location.name}</span>
-          </div>
-          ` : ''}
-          <div class="info-row">
-            <span class="info-label">Created</span>
-            <span class="info-value">${new Date(photo.created_at).toLocaleDateString()}</span>
-          </div>
-        </div>
-        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-          <button class="btn" onclick="downloadImage(${JSON.stringify(photo).replace(/"/g, '&quot;')})" style="flex: 1;">
-            <span>⬇ Download</span>
-          </button>
-          <button class="btn" onclick="window.open('${photo.links.html}?utm_source=glassy_app&utm_medium=referral', '_blank')" style="flex: 1; background: linear-gradient(135deg, var(--secondary), var(--accent));">
-            <span>🔗 View on Unsplash</span>
-          </button>
-        </div>
-      `;
-      modal.classList.add("show");
-    }
-
-    function openInfoModal(photo) {
-      openImageModal(photo);
-    }
-
-    function closeModal() {
-      modal.classList.remove("show");
-    }
-
-    async function downloadImage(photo) {
-      try {
-        if (photo.links.download_location) {
-          await fetch(photo.links.download_location, {
-            headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
-          });
-        }
-
-        const response = await fetch(photo.urls.full);
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `unsplash-${photo.id}.jpg`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-        
-        showToast("✅ Image downloaded!");
-      } catch (error) {
-        showToast("❌ Download failed");
-        console.error(error);
-      }
-    }
-
-    function toggleFavorite(id, btn) {
-      const index = favorites.indexOf(id);
-      if (index > -1) {
-        favorites.splice(index, 1);
-        btn.textContent = "🤍";
-        showToast("Removed from favorites");
-      } else {
-        favorites.push(id);
-        btn.textContent = "❤️";
-        showToast("Added to favorites");
-      }
-    }
-
-    function showLoading() {
-      grid.innerHTML = '<div class="loading"><div class="spinner"></div><h3>Loading beautiful images...</h3></div>';
-    }
-
-    function showToast(message) {
-      const toast = document.createElement("div");
-      toast.className = "toast";
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      
-      setTimeout(() => {
-        toast.style.animation = "slideInRight 0.4s ease reverse";
-        setTimeout(() => toast.remove(), 400);
-      }, 3000);
-    }
-
-    // Initial load with random photos
-    window.addEventListener("load", () => {
-      showToast("🌟 Welcome! Try searching or click Random for inspiration");
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
