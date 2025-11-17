@@ -4,154 +4,101 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Glassy Unsplash Explorer</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <div class="container">
-
+    
     <div class="hero">
       <h1>Discover Stunning Photography</h1>
       <p>Explore millions of beautiful, free images from talented creators worldwide</p>
     </div>
 
-    <div class="nav-tabs">
-      <button class="nav-tab active" data-tab="explore">🔍 Explore</button>
-      <button class="nav-tab" data-tab="favorites">
-        <span class="favorites-badge-wrapper">
-          ❤️ Favorites
-          <span class="favorites-count" id="favoritesCount">0</span>
-        </span>
-      </button>
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="searchInput" type="text" placeholder="Search for images..." />
+        </div>
+        <button class="btn" id="searchBtn"><span>Search</span></button>
+        <button class="btn" id="randomBtn"><span>✨ Random</span></button>
+      </div>
+
+      <div class="quick-actions">
+        <div class="chip" data-search="nature">🌿 Nature</div>
+        <div class="chip" data-search="architecture">🏛️ Architecture</div>
+        <div class="chip" data-search="technology">💻 Technology</div>
+        <div class="chip" data-search="animals">🐾 Animals</div>
+        <div class="chip" data-search="food">🍜 Food</div>
+        <div class="chip" data-search="travel">✈️ Travel</div>
+        <div class="chip" data-search="fashion">👗 Fashion</div>
+        <div class="chip" data-search="business">💼 Business</div>
+      </div>
+
+      <div class="filters">
+        <div class="filters-header" id="filtersToggle">
+          <h3>🎛️ Advanced Filters</h3>
+          <span id="toggleIcon">▼</span>
+        </div>
+        <div class="filters-content" id="filtersContent">
+          <div class="filter-group">
+            <label>Orientation</label>
+            <select id="orientationFilter">
+              <option value="">All</option>
+              <option value="landscape">Landscape</option>
+              <option value="portrait">Portrait</option>
+              <option value="squarish">Square</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Color</label>
+            <select id="colorFilter">
+              <option value="">All Colors</option>
+              <option value="black_and_white">Black & White</option>
+              <option value="black">Black</option>
+              <option value="white">White</option>
+              <option value="yellow">Yellow</option>
+              <option value="orange">Orange</option>
+              <option value="red">Red</option>
+              <option value="purple">Purple</option>
+              <option value="magenta">Magenta</option>
+              <option value="green">Green</option>
+              <option value="teal">Teal</option>
+              <option value="blue">Blue</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Sort By</label>
+            <select id="sortFilter">
+              <option value="relevant">Relevant</option>
+              <option value="latest">Latest</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Per Page</label>
+            <select id="perPageFilter">
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="exploreTab" class="tab-content active">
-
-      <div class="search-section">
-        <div class="search-container">
-          <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input class="search-input" id="searchInput" type="text" placeholder="Search for images..." />
-          </div>
-          <button class="btn" id="searchBtn"><span>Search</span></button>
-          <button class="btn" id="randomBtn" style="background: linear-gradient(135deg, var(--secondary), var(--accent));"><span>✨ Random</span></button>
-        </div>
-
-        <div class="quick-actions">
-          <div class="chip" data-search="nature">🌿 Nature</div>
-          <div class="chip" data-search="architecture">🏛️ Architecture</div>
-          <div class="chip" data-search="technology">💻 Technology</div>
-          <div class="chip" data-search="animals">🐾 Animals</div>
-          <div class="chip" data-search="food">🍜 Food</div>
-          <div class="chip" data-search="travel">✈️ Travel</div>
-          <div class="chip" data-search="fashion">👗 Fashion</div>
-          <div class="chip" data-search="business">💼 Business</div>
-        </div>
-
-        <div class="filters">
-          <div class="filters-header" id="filtersToggle">
-            <h3>🎛️ Advanced Filters</h3>
-            <span id="toggleIcon">▼</span>
-          </div>
-          <div class="filters-content" id="filtersContent">
-            <div class="filter-group">
-              <label>Orientation</label>
-              <select id="orientationFilter">
-                <option value="">All</option>
-                <option value="landscape">Landscape</option>
-                <option value="portrait">Portrait</option>
-                <option value="squarish">Square</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Color</label>
-              <select id="colorFilter">
-                <option value="">All Colors</option>
-                <option value="black_and_white">Black & White</option>
-                <option value="black">Black</option>
-                <option value="white">White</option>
-                <option value="yellow">Yellow</option>
-                <option value="orange">Orange</option>
-                <option value="red">Red</option>
-                <option value="purple">Purple</option>
-                <option value="magenta">Magenta</option>
-                <option value="green">Green</option>
-                <option value="teal">Teal</option>
-                <option value="blue">Blue</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Sort By</label>
-              <select id="sortFilter">
-                <option value="relevant">Relevant</option>
-                <option value="latest">Latest</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Per Page</label>
-              <select id="perPageFilter">
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="50">50</option>
-              </select>
-            </div>
-          </div>
-        </div>
+    <div class="controls">
+      <div class="view-toggle">
+        <button class="view-btn active" data-view="grid">📱 Grid</button>
+        <button class="view-btn" data-view="masonry">🎨 Masonry</button>
       </div>
-
-      <div class="controls">
-        <div class="view-toggle">
-          <button class="view-btn active" data-view="grid">📱 Grid</button>
-          <button class="view-btn" data-view="masonry">🎨 Masonry</button>
-        </div>
-        <div class="results-info" id="resultsInfo"></div>
-      </div>
-
-      <div id="grid" class="grid"></div>
-
-      <div class="pagination" id="pagination" style="display: none;"></div>
+      <div class="results-info" id="resultsInfo"></div>
     </div>
 
-    <div id="favoritesTab" class="tab-content">
-      <div class="favorites-header">
-        <div>
-          <h2>Your Favorites Collection</h2>
-          <p class="favorites-subtitle">Images you've saved for later</p>
-        </div>
-        <button class="btn btn-clear" id="clearFavoritesBtn" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
-          <span>🗑️ Clear All</span>
-        </button>
-      </div>
-
-      <div class="favorites-stats">
-        <div class="stat-card">
-          <div class="stat-icon">📸</div>
-          <div class="stat-content">
-            <div class="stat-value" id="totalFavorites">0</div>
-            <div class="stat-label">Total Favorites</div>
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📅</div>
-          <div class="stat-content">
-            <div class="stat-value" id="lastAdded">Never</div>
-            <div class="stat-label">Last Added</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="favoritesGrid" class="grid"></div>
-
-      <div id="emptyFavorites" class="empty-state">
-        <div class="empty-icon">💔</div>
-        <h3>No favorites yet</h3>
-        <p>Start exploring and click the heart icon on images you love!</p>
-        <button class="btn" onclick="switchToExplore()">
-          <span>🔍 Start Exploring</span>
-        </button>
-      </div>
-    </div>
+    <div id="grid" class="grid"></div>
+    <div class="pagination" id="pagination" style="display: none;"></div>
   </div>
 
   <div id="modal" class="modal">
