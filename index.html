@@ -18,16 +18,16 @@
       --bg-dark: #0a0e27;
       --bg-gradient-1: #1a1f3a;
       --bg-gradient-2: #2d1b3d;
-
+      
       --glass-bg: rgba(255, 255, 255, 0.05);
       --glass-border: rgba(255, 255, 255, 0.1);
       --glass-hover: rgba(255, 255, 255, 0.08);
-
+      
       --primary: #667eea;
       --primary-light: #818cf8;
       --secondary: #f093fb;
       --accent: #4facfe;
-
+      
       --text: #ffffff;
       --text-muted: rgba(255, 255, 255, 0.7);
       --text-dim: rgba(255, 255, 255, 0.5);
@@ -61,6 +61,7 @@
       z-index: 1;
     }
 
+    /* Hero Section */
     .hero {
       text-align: center;
       padding: 3rem 0 2rem;
@@ -83,6 +84,7 @@
       margin-bottom: 2.5rem;
     }
 
+    /* Search Section */
     .search-section {
       margin-bottom: 2rem;
     }
@@ -166,6 +168,7 @@
       z-index: 1;
     }
 
+    /* Quick Actions */
     .quick-actions {
       display: flex;
       gap: 0.8rem;
@@ -193,6 +196,7 @@
       box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
     }
 
+    /* Filters Panel */
     .filters {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
@@ -248,6 +252,7 @@
       border-color: var(--primary);
     }
 
+    /* View Toggle */
     .controls {
       display: flex;
       justify-content: space-between;
@@ -288,6 +293,7 @@
       font-size: 0.95rem;
     }
 
+    /* Grid Layouts */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -313,6 +319,7 @@
       .masonry { column-count: 1; }
     }
 
+    /* Grid Item */
     .grid-item {
       position: relative;
       overflow: hidden;
@@ -410,6 +417,7 @@
       border-color: var(--primary);
     }
 
+    /* Pagination */
     .pagination {
       display: flex;
       justify-content: center;
@@ -449,6 +457,7 @@
       font-weight: 600;
     }
 
+    /* Modal */
     .modal {
       position: fixed;
       inset: 0;
@@ -560,6 +569,7 @@
       font-weight: 500;
     }
 
+    /* Loading */
     .loading {
       text-align: center;
       padding: 3rem;
@@ -576,6 +586,7 @@
       margin: 0 auto 1rem;
     }
 
+    /* Toast Notifications */
     .toast {
       position: fixed;
       bottom: 2rem;
@@ -591,6 +602,7 @@
       animation: slideInRight 0.4s ease;
     }
 
+    /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -644,6 +656,7 @@
       }
     }
 
+    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 12px;
     }
@@ -661,6 +674,7 @@
       background: var(--primary-light);
     }
 
+    /* Skeleton Loader */
     .skeleton {
       background: linear-gradient(90deg, var(--glass-bg) 25%, var(--glass-hover) 50%, var(--glass-bg) 75%);
       background-size: 200% 100%;
@@ -681,13 +695,13 @@
 
 <body>
   <div class="container">
-    
+    <!-- Hero Section -->
     <div class="hero">
       <h1>Discover Stunning Photography</h1>
       <p>Explore millions of beautiful, free images from talented creators worldwide</p>
     </div>
 
-    
+    <!-- Search Section -->
     <div class="search-section">
       <div class="search-container">
         <div class="search-wrapper">
@@ -698,7 +712,7 @@
         <button class="btn" id="randomBtn" style="background: linear-gradient(135deg, var(--secondary), var(--accent));"><span>✨ Random</span></button>
       </div>
 
-      
+      <!-- Quick Actions -->
       <div class="quick-actions">
         <div class="chip" data-search="nature">🌿 Nature</div>
         <div class="chip" data-search="architecture">🏛️ Architecture</div>
@@ -710,7 +724,7 @@
         <div class="chip" data-search="business">💼 Business</div>
       </div>
 
-      
+      <!-- Filters -->
       <div class="filters">
         <div class="filters-header" id="filtersToggle">
           <h3>🎛️ Advanced Filters</h3>
@@ -762,7 +776,7 @@
       </div>
     </div>
 
-    
+    <!-- Controls -->
     <div class="controls">
       <div class="view-toggle">
         <button class="view-btn active" data-view="grid">📱 Grid</button>
@@ -771,14 +785,14 @@
       <div class="results-info" id="resultsInfo"></div>
     </div>
 
-    
+    <!-- Grid -->
     <div id="grid" class="grid"></div>
 
-    
+    <!-- Pagination -->
     <div class="pagination" id="pagination" style="display: none;"></div>
   </div>
 
-  
+  <!-- Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -791,7 +805,7 @@
 
   <script>
     const ACCESS_KEY = "azxC7gJDxRQ8ChWOzJqTFDeOHJK-k0MWBPIU6bK__RI";
-
+    
     let currentPage = 1;
     let totalPages = 1;
     let currentQuery = "";
@@ -804,6 +818,7 @@
     const modal = document.getElementById("modal");
     const modalBody = document.getElementById("modalBody");
 
+    // Event Listeners
     document.getElementById("searchBtn").addEventListener("click", performSearch);
     document.getElementById("randomBtn").addEventListener("click", getRandomPhotos);
     document.getElementById("searchInput").addEventListener("keypress", e => {
@@ -848,6 +863,7 @@
       if (e.key === "Escape") closeModal();
     });
 
+    // Main Functions
     async function performSearch() {
       const query = document.getElementById("searchInput").value.trim();
       if (!query) {
@@ -862,13 +878,13 @@
 
     async function fetchAndRender() {
       showLoading();
-
+      
       const orientation = document.getElementById("orientationFilter").value;
       const color = document.getElementById("colorFilter").value;
       const orderBy = document.getElementById("sortFilter").value;
       const perPage = document.getElementById("perPageFilter").value;
 
-      let url = `https:
+      let url = `https://api.unsplash.com/search/photos?page=${currentPage}&query=${encodeURIComponent(currentQuery)}&per_page=${perPage}`;
       if (orientation) url += `&orientation=${orientation}`;
       if (color) url += `&color=${color}`;
       if (orderBy) url += `&order_by=${orderBy}`;
@@ -880,7 +896,7 @@
 
         const data = await res.json();
         totalPages = data.total_pages;
-
+        
         renderImages(data.results);
         renderPagination();
         updateResultsInfo(data.total, perPage);
@@ -892,9 +908,9 @@
 
     async function getRandomPhotos() {
       showLoading();
-
+      
       try {
-        const res = await fetch(`https:
+        const res = await fetch(`https://api.unsplash.com/photos/random?count=30`, {
           headers: { Authorization: `Client-ID ${ACCESS_KEY}` }
         });
 
@@ -902,7 +918,7 @@
         currentQuery = "random";
         currentPage = 1;
         totalPages = 1;
-
+        
         renderImages(data);
         pagination.style.display = "none";
         updateResultsInfo(30, 30);
@@ -1069,7 +1085,7 @@
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-
+        
         showToast("✅ Image downloaded!");
       } catch (error) {
         showToast("❌ Download failed");
@@ -1099,13 +1115,14 @@
       toast.className = "toast";
       toast.textContent = message;
       document.body.appendChild(toast);
-
+      
       setTimeout(() => {
         toast.style.animation = "slideInRight 0.4s ease reverse";
         setTimeout(() => toast.remove(), 400);
       }, 3000);
     }
 
+    // Initial load with random photos
     window.addEventListener("load", () => {
       showToast("🌟 Welcome! Try searching or click Random for inspiration");
     });
